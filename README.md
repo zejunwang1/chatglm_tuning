@@ -1,1 +1,1 @@
-# LLMLoRA: 基于 LoRA 的 LLM 参数微调 
+# chatglm_tuning: 基于 LoRA 和 P-Tuning v2 的 ChatGLM-6B 高效参数微调
