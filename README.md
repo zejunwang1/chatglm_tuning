@@ -78,6 +78,8 @@ chatglm_6b_ptuning.json 为训练参数配置文件：
 
 在`quantization_bit=4`、`per_device_train_batch_size=4`、`gradient_accumulation_steps=4`、`fp16=false` 的配置下，单卡只需 8.6G 显存便可对 ChatGLM-6B 模型进行微调。微调过程中 loss 的变化如下图所示：
 
+![](images/ptuning_loss.png)
+
 在 P-tuning v2 训练时模型只保存 PrefixEncoder 部分的参数，所以在推理时需要同时加载原 ChatGLM-6B 模型以及 PrefixEncoder 的权重。
 
 ```shell
