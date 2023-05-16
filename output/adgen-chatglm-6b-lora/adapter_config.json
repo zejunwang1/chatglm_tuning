@@ -1,5 +1,5 @@
 {
-  "base_model_name_or_path": "/home/cdata/wangzejun/ChatGLM/chatglm-6b/",
+  "base_model_name_or_path": "/data/wangzejun/models/chatglm-6b/",
   "bias": "none",
   "fan_in_fan_out": false,
   "inference_mode": true,
