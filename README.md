@@ -116,6 +116,8 @@ python cli_demo.py \
 
 [LoRA](https://github.com/microsoft/LoRA) 的实现思想很简单，如下图所示，就是冻结一个预训练语言模型的矩阵参数，并选择用 `A` 和 `B` 矩阵来替代，在下游任务时只更新 `A` 和 `B`。
 
+![](images/lora.png)
+
  LoRA 的实现流程概况如下：
 
 - 在原始预训练语言模型 (PLM) 旁增加一个旁路，做一个先降维再升维的操作，以此来模拟所谓的内在秩；
@@ -140,6 +142,8 @@ torchrun --nproc_per_node=2 train_lora.py \
 ```
 
 在 `per_device_train_batch_size=3`、`gradient_accumulation_steps=4`、`fp16=false` 的配置下，训练大约需要 16G 单卡显存。微调过程中 loss 的变化如下图所示：
+
+![](images/lora_loss.png)
 
 训练完成后，运行如下命令进行推理：
 
