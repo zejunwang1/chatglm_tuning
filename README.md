@@ -186,7 +186,7 @@ python cli_demo.py \
   year = {2023},
   publisher = {GitHub},
   journal = {GitHub repository},
-  howpublished = {\url{https://github.com/zejunwang1/chatglm_tuning}},
+  howpublished = {\url{https://github.com/zejunwang1/chatglm_tuning}}
 }
 ```
 
