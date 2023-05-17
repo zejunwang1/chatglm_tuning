@@ -90,11 +90,11 @@ def train(args):
         model = AutoModel.from_pretrained(args.model_name_or_path, trust_remote_code=True)
         model = model.half()
 
+    model.config.use_cache = False
     if not args.no_gradient_checkpointing:
         model.gradient_checkpointing_enable()
         model.enable_input_require_grads()
-        model.config.use_cache = False
-           
+
     if args.model_parallel:
         model.is_parallelizable = True
         model.model_parallel = True
