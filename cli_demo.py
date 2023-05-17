@@ -82,7 +82,7 @@ def load_model(args):
                 trust_remote_code=True)
             model = model.half().cuda()
 
-        model = PeftModel.from_pretrained(model.cuda(), args.lora_checkpoint)
+        model = PeftModel.from_pretrained(model, args.lora_checkpoint)
     else:
         model = AutoModel.from_pretrained(args.model_name_or_path,
             trust_remote_code=True)

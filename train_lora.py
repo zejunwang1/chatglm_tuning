@@ -60,6 +60,13 @@ class DataCollator:
         labels = torch.stack(labels)
         return {"input_ids": input_ids, "labels": labels}
 
+class ModifiedTrainer(Trainer):
+    def save_model(self, output_dir=None, _internal_call=False):
+        if output_dir is None:
+            output_dir = self.args.output_dir
+        self.model.save_pretrained(output_dir)
+        torch.save(self.args, os.path.join(output_dir, "training_args.bin"))
+        
 def train(args):
     parser = HfArgumentParser(TrainingArguments)
     training_args, = parser.parse_json_file(json_file=args.train_args_file)
@@ -159,7 +166,7 @@ def train(args):
         eval_dataset = eval_data["train"].map(tokenize_function, remove_columns=column_names)
     
     # trainer
-    trainer = Trainer(
+    trainer = ModifiedTrainer(
         model=model,
         args=training_args,
         train_dataset=train_dataset,

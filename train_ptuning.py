@@ -51,6 +51,17 @@ class DataCollator:
         labels = torch.stack(labels)
         return {"input_ids": input_ids, "labels": labels}
 
+class ModifiedTrainer(Trainer):
+    def _save(self, output_dir=None, state_dict=None):
+        # If we are executing this function, we are the process zero, so we don't check for that.
+        output_dir = output_dir if output_dir is not None else self.args.output_dir
+        os.makedirs(output_dir, exist_ok=True)
+        torch.save(self.args, os.path.join(output_dir, "training_args.bin"))
+        saved_params = {
+            k: v.to("cpu") for k, v in self.model.named_parameters() if v.requires_grad
+        }
+        torch.save(saved_params, os.path.join(output_dir, "pytorch_model.bin"))
+
 def train(args):
     parser = HfArgumentParser(TrainingArguments)
     training_args, = parser.parse_json_file(json_file=args.train_args_file)
@@ -132,7 +143,7 @@ def train(args):
         eval_dataset = eval_data["train"].map(tokenize_function, remove_columns=column_names)
     
     # trainer
-    trainer = Trainer(
+    trainer = ModifiedTrainer(
         model=model,
         args=training_args,
         train_dataset=train_dataset,
@@ -146,6 +157,13 @@ def train(args):
     # Save model & tokenizer results
     if args.pre_seq_len is not None:
         print("Saving PrefixEncoder")
+        os.makedirs(training_args.output_dir, exist_ok=True)
+        saved_params = {
+            k: v.to("cpu") for k, v in trainer.model.named_parameters() if v.requires_grad
+        }
+        torch.save(saved_params, os.path.join(training_args.output_dir, "pytorch_model.bin"))
+        """
+        print("Saving PrefixEncoder")
         state_dict = trainer.model.state_dict()
         filtered_state_dict = {}
         for k, v in trainer.model.named_parameters():
@@ -153,6 +171,7 @@ def train(args):
                 filtered_state_dict[k] = state_dict[k]
         trainer.model.save_pretrained(training_args.output_dir, 
             state_dict=filtered_state_dict)
+        """
     else:
         trainer.save_model(training_args.output_dir)    
     #tokenizer.save_pretrained(training_args.output_dir)
