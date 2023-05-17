@@ -143,13 +143,22 @@ def train(args):
         eval_dataset = eval_data["train"].map(tokenize_function, remove_columns=column_names)
     
     # trainer
-    trainer = ModifiedTrainer(
-        model=model,
-        args=training_args,
-        train_dataset=train_dataset,
-        eval_dataset=eval_dataset,
-        data_collator=DataCollator(pad_token_id=tokenizer.pad_token_id)
-    )
+    if args.pre_seq_len is not None:
+        trainer = ModifiedTrainer(
+            model=model,
+            args=training_args,
+            train_dataset=train_dataset,
+            eval_dataset=eval_dataset,
+            data_collator=DataCollator(pad_token_id=tokenizer.pad_token_id)
+        )
+    else:
+        trainer = Trainer(
+            model=model,
+            args=training_args,
+            train_dataset=train_dataset,
+            eval_dataset=eval_dataset,
+            data_collator=DataCollator(pad_token_id=tokenizer.pad_token_id)
+        )
     
     # train model
     trainer.train(resume_from_checkpoint=training_args.resume_from_checkpoint)
